@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "api.myspa.micro.service",
+      "script": "npm run build && npm start",
+      "node_args": ""
+    }
+  ]
+}
