@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  rabbitmq_micro:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_micro
+    ports:
+      - "5672:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      rabbitmq_micro:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+
+      DB_CONNECTION: mysql
+      DB_HOST: ${DOCKET_DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      MONGODB_URI: ${MONGODB_URI}
+
+      RABBITMQ_URL: ${RABBITMQ_URL}
+
+      SLACK_APP_XOXP_TOKEN: ${SLACK_APP_XOXP_TOKEN}
+
+    restart: unless-stopped
+    tty: true
+    stdin_open: true

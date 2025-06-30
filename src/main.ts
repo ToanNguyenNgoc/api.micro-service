@@ -8,7 +8,8 @@ async function bootstrap() {
     {
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://guest:guest@localhost:5672'],
+        // urls:['amqp://guest:guest@localhost:5672'],
+        urls: [process.env.RABBITMQ_URL],
         queue: 'nestjs_queue',
         queueOptions: { durable: true },
         exchange: 'nestjs_exchange',
